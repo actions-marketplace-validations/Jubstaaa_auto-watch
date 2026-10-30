@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { FakeApi } from '../src/fake-api'
+import { FakeApi } from './fake-api'
 import { watchAll } from '../src/watch'
 
 import type { Repo } from '../src/api.types'
@@ -8,6 +8,7 @@ import type { Repo } from '../src/api.types'
 const repo = (fullName: string): Repo => ({
     fullName,
     fork: false,
+    private: false,
     archived: false,
     createdAt: '2026-10-12T10:00:00Z',
 })

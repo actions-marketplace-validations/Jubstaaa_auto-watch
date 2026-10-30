@@ -8,7 +8,7 @@ This Action puts it back. It runs once an hour in your own repo's Actions, watch
 
 ## Setup
 
-**1. Add the workflow** to any repo of yours. Your profile repo (`you/you`) is a good home. Save it as `.github/workflows/auto-watch.yml`:
+**1. Add the workflow** to any repo of yours. Your profile repo (`you/you`) is a good home. Private repos are only counted in its logs, never named. Save it as `.github/workflows/auto-watch.yml`:
 
 ```yaml
 name: auto-watch
@@ -59,6 +59,10 @@ Then open the Actions tab, pick **auto-watch**, click **Run workflow** and tick 
 | `dry-run`      | `false`  | Show what it would watch without changing anything                                                    |
 
 Outputs: `watched` (a count) and `watched-repos` (a JSON array).
+
+Private repos are only counted in the log and the run summary, never named, because anyone can read the Actions logs of a public repo. `watched-repos` does contain their names, so don't print it in a public repo.
+
+Private repos are only counted in the log and the run summary, never named, because anyone can read the Actions logs of a public repo. `watched-repos` does contain their names, so don't print it in a public repo.
 
 Forks and archived repos are always skipped. So is any repo you set to **Ignore**.
 

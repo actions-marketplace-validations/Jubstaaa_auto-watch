@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { FakeApi } from '../src/fake-api'
+import { FakeApi } from './fake-api'
 import { runAutoWatch } from '../src/run'
 
 import type { Settings } from '../src/inputs.types'
@@ -25,7 +25,13 @@ describe('runAutoWatch', () => {
     it('watches new repos and keeps the schedule alive', async () => {
         const api = new FakeApi()
         api.repos = [
-            { fullName: 'me/new', fork: false, archived: false, createdAt: '2026-10-12T10:00:00Z' },
+            {
+                fullName: 'me/new',
+                fork: false,
+                private: false,
+                archived: false,
+                createdAt: '2026-10-12T10:00:00Z',
+            },
         ]
 
         const outcome = await runAutoWatch(api, settings(), ENV, NOW)
@@ -34,6 +40,25 @@ describe('runAutoWatch', () => {
         expect(api.enabled).toEqual(['me/me:auto-watch.yml'])
         expect(outcome.failure).toBeNull()
         expect(outcome.watched).toEqual(['me/new'])
+    })
+
+    it('keeps private repo names out of the log and summary', async () => {
+        const api = new FakeApi()
+        api.repos = [
+            {
+                fullName: 'me/secret',
+                fork: false,
+                private: true,
+                archived: false,
+                createdAt: '2026-10-12T10:00:00Z',
+            },
+        ]
+
+        const outcome = await runAutoWatch(api, settings(), ENV, NOW)
+
+        expect(api.watched).toEqual(['me/secret'])
+        expect(outcome.log).toEqual(['Watching 1 private repo'])
+        expect(outcome.report?.privateNames).toEqual(new Set(['me/secret']))
     })
 
     it('still keeps the schedule alive when the token is wrong', async () => {
